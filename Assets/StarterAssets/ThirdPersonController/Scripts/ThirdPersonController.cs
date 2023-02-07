@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cinemachine;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -24,6 +25,9 @@ namespace StarterAssets
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
         public float RotationSmoothTime = 0.12f;
+
+        [SerializeField]
+        float aimRotationSpeed = 5f;
 
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
@@ -74,6 +78,9 @@ namespace StarterAssets
 
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
+
+        [SerializeField]
+        private CinemachineVirtualCamera aimCamera;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -159,6 +166,27 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
+            //RotatesTowardsAim();
+            Aim();
+        }
+
+        private void RotatesTowardsAim()
+        {
+            if(_input.aim)
+            {
+                // Quaternion targetRotation = Quaternion.Euler(0, _mainCamera.transform.eulerAngles.y, 0);
+                // transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, aimRotationSpeed * Time.deltaTime);
+
+                // Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+
+                // _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
+                //   _mainCamera.transform.eulerAngles.y;
+                // float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
+                //     RotationSmoothTime);
+
+                // // rotate to face input direction relative to camera position
+                // transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+            }
         }
 
         private void LateUpdate()
@@ -207,8 +235,10 @@ namespace StarterAssets
             _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
             // Cinemachine will follow this target
-            CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
-                _cinemachineTargetYaw, 0.0f);
+
+            CinemachineCameraTarget.transform.rotation = 
+            Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride, _cinemachineTargetYaw, 0.0f);
+
         }
 
         private void Move()
@@ -253,7 +283,7 @@ namespace StarterAssets
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (_input.move != Vector2.zero)
+            if (_input.move != Vector2.zero || _input.aim)
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                   _mainCamera.transform.eulerAngles.y;
@@ -387,6 +417,21 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        private void Aim()
+        {
+            aimCamera.Priority = _input.aim ? ZoomIn() : ZoomOut();
+        }
+
+        private int ZoomIn()
+        {
+            return +10;
+        }
+
+        private int ZoomOut()
+        {
+            return -10;
         }
     }
 }
