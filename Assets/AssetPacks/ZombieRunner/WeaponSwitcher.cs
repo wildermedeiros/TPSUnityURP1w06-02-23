@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class WeaponSwitcher : MonoBehaviour
 {
-    [SerializeField] int currentWeapon = 0;
+    [SerializeField]
+    int currentWeapon = 0;
+    [SerializeField]
+    StarterAssetsInputs inputs;
 
     void Start()
     {
@@ -16,8 +19,8 @@ public class WeaponSwitcher : MonoBehaviour
     {
         int previousWeapon = currentWeapon;
 
-        ProcessKeyInput();
-        //ProcessScrollWheel();
+        //ProcessKeyInput();
+        ProcessScrollWheel();
 
         if (previousWeapon != currentWeapon)
         {
@@ -25,32 +28,34 @@ public class WeaponSwitcher : MonoBehaviour
         }
     }
 
-    // private void ProcessScrollWheel()
-    // {
-    //     if (Input.GetAxis("Mouse ScrollWheel") < 0)
-    //     {
-    //         if (currentWeapon >= transform.childCount - 1)
-    //         {
-    //             currentWeapon = 0;
-    //         }
-    //         else
-    //         {
-    //             currentWeapon++;
-    //         }
-    //     }
+    private void ProcessScrollWheel()
+    {
+        if (inputs.switchWeapon)
+        {
+            if (currentWeapon >= transform.childCount - 1)
+            {
+                currentWeapon = 0;
+                inputs.switchWeapon = false;
+            }
+            else
+            {
+                currentWeapon++;
+                inputs.switchWeapon = false;
+            }
+        }
 
-    //     if (Input.GetAxis("Mouse ScrollWheel") > 0)
-    //     {
-    //         if (currentWeapon <= 0)
-    //         {
-    //             currentWeapon = transform.childCount - 1;
-    //         }
-    //         else
-    //         {
-    //             currentWeapon--;
-    //         }
-    //     }
-    // }
+        // if (Input.GetAxis("Mouse ScrollWheel") > 0)
+        // {
+        //     if (currentWeapon <= 0)
+        //     {
+        //         currentWeapon = transform.childCount - 1;
+        //     }
+        //     else
+        //     {
+        //         currentWeapon--;
+        //     }
+        // }
+    }
 
     private void ProcessKeyInput()
     {

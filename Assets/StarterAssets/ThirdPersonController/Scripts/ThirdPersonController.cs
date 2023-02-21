@@ -177,6 +177,8 @@ namespace StarterAssets
                 // Quaternion targetRotation = Quaternion.Euler(0, _mainCamera.transform.eulerAngles.y, 0);
                 // transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, aimRotationSpeed * Time.deltaTime);
 
+                // ---------------
+
                 // Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
                 // _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
