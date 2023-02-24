@@ -50,7 +50,7 @@ public class Weapon : MonoBehaviour
     IEnumerator Shoot()
     {
         canShoot = false;
-        inputs.shoot = false;
+        inputs.ShootInput(false);
         if (ammoSlot.GetCurrentAmmo(ammoType) > 0)
         {
             PlayMuzzleFlash();
@@ -69,8 +69,10 @@ public class Weapon : MonoBehaviour
 
     private void ProcessRaycast()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(barrelTransform.position, barrelTransform.forward, out hit, range))
+        Vector2 screenCenterPoint = new Vector2(Screen.width /2f, Screen.height /2f);
+        Ray rayCenterScreenPoint = Camera.main.ScreenPointToRay(screenCenterPoint);
+        
+        if (Physics.Raycast(rayCenterScreenPoint, out RaycastHit hit, range))
         {
             CreateHitImpact(hit);
             //EnemyHealth target = hit.transform.GetComponent<EnemyHealth>();

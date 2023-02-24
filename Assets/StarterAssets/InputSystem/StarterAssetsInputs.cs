@@ -53,12 +53,12 @@ public class StarterAssetsInputs : MonoBehaviour
 
 	public void OnSwitchWeapon(InputValue value)
 	{
-		SwitchWeapon(value.isPressed);
+		SwitchWeaponInput(value.isPressed);
 	}
 
 	public void OnShoot(InputValue value)
 	{
-		Shoot(value.isPressed);
+		ShootInput(value.isPressed);
 	}
 
 #endif
@@ -89,12 +89,12 @@ public class StarterAssetsInputs : MonoBehaviour
 		aim = newAimState;
 	}
 
-	public void SwitchWeapon(bool newSwitchWeaponState)
+	public void SwitchWeaponInput(bool newSwitchWeaponState)
 	{
 		switchWeapon = newSwitchWeaponState;
 	}
 
-    private void Shoot(bool newShootState)
+    public void ShootInput(bool newShootState)
     {
         shoot = newShootState;
     }

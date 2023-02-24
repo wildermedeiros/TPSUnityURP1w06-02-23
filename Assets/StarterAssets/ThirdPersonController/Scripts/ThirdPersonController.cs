@@ -2,6 +2,7 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
@@ -25,6 +26,12 @@ namespace StarterAssets
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
         public float RotationSmoothTime = 0.12f;
+
+        float sensitivity = 1f;
+        [SerializeField]
+        float normalSensitivity = 1f;
+        [SerializeField]
+        float aimSensitivity = 1f;
 
         [SerializeField]
         float aimRotationSpeed = 5f;
@@ -80,7 +87,9 @@ namespace StarterAssets
         public bool LockCameraPosition = false;
 
         [SerializeField]
-        private CinemachineVirtualCamera aimCamera;
+        CinemachineVirtualCamera aimCamera;
+        [SerializeField]
+        Image crosshair = null;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -228,8 +237,8 @@ namespace StarterAssets
                 //Don't multiply mouse input by Time.deltaTime;
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
-                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
+                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier * sensitivity;
+                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier * sensitivity;
             }
 
             // clamp our rotations so our values are limited 360 degrees
@@ -428,12 +437,21 @@ namespace StarterAssets
 
         private int ZoomIn()
         {
+            SetSensitivity(aimSensitivity);
+            crosshair.enabled = true;
             return +10;
         }
 
         private int ZoomOut()
         {
+            SetSensitivity(normalSensitivity);
+            crosshair.enabled = false;
             return -10;
+        }
+
+        public void SetSensitivity(float newSensitivity)
+        {
+            sensitivity = newSensitivity;
         }
     }
 }
