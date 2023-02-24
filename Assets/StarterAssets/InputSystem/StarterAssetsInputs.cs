@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
@@ -12,6 +13,7 @@ public class StarterAssetsInputs : MonoBehaviour
 	public bool sprint;
 	public bool aim;
 	public bool switchWeapon;
+	public bool shoot;
 
 	[Header("Movement Settings")]
 	public bool analogMovement;
@@ -54,10 +56,15 @@ public class StarterAssetsInputs : MonoBehaviour
 		SwitchWeapon(value.isPressed);
 	}
 
+	public void OnShoot(InputValue value)
+	{
+		Shoot(value.isPressed);
+	}
+
 #endif
 
 
-	public void MoveInput(Vector2 newMoveDirection)
+    public void MoveInput(Vector2 newMoveDirection)
 	{
 		move = newMoveDirection;
 	} 
@@ -86,6 +93,11 @@ public class StarterAssetsInputs : MonoBehaviour
 	{
 		switchWeapon = newSwitchWeaponState;
 	}
+
+    private void Shoot(bool newShootState)
+    {
+        shoot = newShootState;
+    }
 
 	private void OnApplicationFocus(bool hasFocus)
 	{

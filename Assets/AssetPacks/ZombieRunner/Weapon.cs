@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Weapon : MonoBehaviour
 {
-    [SerializeField] Camera FPCamera;
+    [SerializeField] Transform barrelTransform;
     [SerializeField] float range = 100f;
     [SerializeField] float damage = 30f;
     [SerializeField] ParticleSystem muzzleFlash;
@@ -15,8 +16,15 @@ public class Weapon : MonoBehaviour
     [SerializeField] AmmoType ammoType;
     [SerializeField] float timeBetweenShots = 0.5f;
     [SerializeField] TextMeshProUGUI ammoText;
-
+    [SerializeField] StarterAssetsInputs inputs;
+    [SerializeField] UnityEvent onShoot;
+    
+    Transform myCamera;
     bool canShoot = true;
+
+    private void Awake() {
+        myCamera = Camera.main.transform;
+    }
 
     private void OnEnable()
     {
@@ -25,8 +33,9 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
+        transform.forward = myCamera.forward;
         DisplayAmmo();
-        if (Input.GetMouseButtonDown(0) && canShoot == true)
+        if (inputs.shoot && canShoot == true)
         {
             StartCoroutine(Shoot());
         }
@@ -41,10 +50,12 @@ public class Weapon : MonoBehaviour
     IEnumerator Shoot()
     {
         canShoot = false;
+        inputs.shoot = false;
         if (ammoSlot.GetCurrentAmmo(ammoType) > 0)
         {
             PlayMuzzleFlash();
             ProcessRaycast();
+            PlaySoundEffect();
             ammoSlot.ReduceCurrentAmmo(ammoType);
         }
         yield return new WaitForSeconds(timeBetweenShots);
@@ -59,7 +70,7 @@ public class Weapon : MonoBehaviour
     private void ProcessRaycast()
     {
         RaycastHit hit;
-        if (Physics.Raycast(FPCamera.transform.position, FPCamera.transform.forward, out hit, range))
+        if (Physics.Raycast(barrelTransform.position, barrelTransform.forward, out hit, range))
         {
             CreateHitImpact(hit);
             //EnemyHealth target = hit.transform.GetComponent<EnemyHealth>();
@@ -75,6 +86,12 @@ public class Weapon : MonoBehaviour
     private void CreateHitImpact(RaycastHit hit)
     {
         GameObject impact = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
-        Destroy(impact, .1f);
+        Destroy(impact, impact.GetComponent<ParticleSystem>().main.duration);
     }
+
+    private void PlaySoundEffect()
+    {
+        onShoot.Invoke();
+    }
+
 }
