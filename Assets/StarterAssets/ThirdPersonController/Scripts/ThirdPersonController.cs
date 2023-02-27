@@ -28,10 +28,6 @@ namespace StarterAssets
         public float RotationSmoothTime = 0.12f;
 
         float sensitivity = 1f;
-        [SerializeField]
-        float normalSensitivity = 1f;
-        [SerializeField]
-        float aimSensitivity = 1f;
 
         [SerializeField]
         float aimRotationSpeed = 5f;
@@ -86,11 +82,6 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
-        [SerializeField]
-        CinemachineVirtualCamera aimCamera;
-        [SerializeField]
-        Image crosshair = null;
-
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -125,6 +116,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        private bool isAiming = false;
 
         private bool IsCurrentDeviceMouse
         {
@@ -137,7 +129,6 @@ namespace StarterAssets
 #endif
             }
         }
-
 
         private void Awake()
         {
@@ -176,7 +167,6 @@ namespace StarterAssets
             GroundedCheck();
             Move();
             //RotatesTowardsAim();
-            Aim();
         }
 
         private void RotatesTowardsAim()
@@ -294,7 +284,7 @@ namespace StarterAssets
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (_input.move != Vector2.zero || _input.aim)
+            if (_input.move != Vector2.zero)
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                   _mainCamera.transform.eulerAngles.y;
@@ -302,7 +292,10 @@ namespace StarterAssets
                     RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                if (!isAiming)
+                {
+                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                }
             }
 
 
@@ -430,28 +423,14 @@ namespace StarterAssets
             }
         }
 
-        private void Aim()
-        {
-            aimCamera.Priority = _input.aim ? ZoomIn() : ZoomOut();
-        }
-
-        private int ZoomIn()
-        {
-            SetSensitivity(aimSensitivity);
-            crosshair.enabled = true;
-            return +10;
-        }
-
-        private int ZoomOut()
-        {
-            SetSensitivity(normalSensitivity);
-            crosshair.enabled = false;
-            return -10;
-        }
-
         public void SetSensitivity(float newSensitivity)
         {
             sensitivity = newSensitivity;
+        }
+
+        public void SetAimingState(bool aimingState)
+        {
+            isAiming = aimingState;
         }
     }
 }

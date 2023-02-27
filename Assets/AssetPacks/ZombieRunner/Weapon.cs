@@ -20,25 +20,15 @@ public class Weapon : MonoBehaviour
     [SerializeField] UnityEvent onShoot;
     
     Transform myCamera;
-    bool canShoot = true;
+    bool canShoot = false;
 
     private void Awake() {
         myCamera = Camera.main.transform;
     }
 
-    private void OnEnable()
-    {
-        canShoot = true;
-    }
-
     void Update()
     {
-        transform.forward = myCamera.forward;
         DisplayAmmo();
-        if (inputs.shoot && canShoot == true)
-        {
-            StartCoroutine(Shoot());
-        }
     }
 
     private void DisplayAmmo()
@@ -47,10 +37,9 @@ public class Weapon : MonoBehaviour
         ammoText.text = currentAmmo.ToString();
     }
 
-    IEnumerator Shoot()
+    public IEnumerator Shoot()
     {
         canShoot = false;
-        inputs.ShootInput(false);
         if (ammoSlot.GetCurrentAmmo(ammoType) > 0)
         {
             PlayMuzzleFlash();
@@ -96,4 +85,13 @@ public class Weapon : MonoBehaviour
         onShoot.Invoke();
     }
 
+    public void CanShoot(bool shootStatus)
+    {
+        canShoot = shootStatus;
+    }
+
+    public bool GetCanShoot()
+    {
+        return canShoot;
+    }
 }
