@@ -60,7 +60,7 @@ public class Weapon : MonoBehaviour
     {
         Vector2 screenCenterPoint = new Vector2(Screen.width /2f, Screen.height /2f);
         Ray rayCenterScreenPoint = Camera.main.ScreenPointToRay(screenCenterPoint);
-        
+
         if (Physics.Raycast(rayCenterScreenPoint, out RaycastHit hit, range))
         {
             CreateHitImpact(hit);
